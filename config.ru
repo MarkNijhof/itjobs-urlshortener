@@ -7,9 +7,9 @@ app = Firefly::Server.new do
   set :hostname,    "itjo.bs"
   set :api_key,     ""
 
-  dir = File.dirname(__FILE__)
-  set :views, "#{dir}/views"
-  set :public, "#{dir}/public"
+  # dir = File.dirname(__FILE__)
+  # set :views, "#{dir}/views"
+  # set :public, "#{dir}/public"
 
   # Use Sqlite3 by default
   # set :database,    "sqlite3://#{Dir.pwd}/firefly.sqlite3"
