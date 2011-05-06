@@ -38,7 +38,7 @@ app = Firefly::Server.new do
 end
 
 module Firefly
-  class Server
+  class Server < Sinatra::Base
     dir = File.dirname(__FILE__)
 
     set :views, "#{dir}/views"
