@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/MarkNijhof/firefly.git
-  revision: 4a6db31c1819c912d6e72da65cd6cf8fd3958e1b
+  revision: 09d4bc2f1aba039ac13076f1093e84b32a87cc2f
   specs:
     firefly (1.5.4)
       dm-aggregates (~> 1.0.2)
@@ -68,5 +68,5 @@ PLATFORMS
 DEPENDENCIES
   dm-postgres-adapter (= 1.0.2)
   do_mysql (= 0.10.5)
-  firefly!
+  firefly (= 1.5.4)!
   heroku (= 2.0.5)
