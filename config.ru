@@ -4,6 +4,12 @@ require 'firefly'
 disable :run
 
 app = Firefly::Server.new do
+
+  dir = File.join(File.dirname(__FILE__), '..', '..')
+
+  set :views, "#{dir}/views"
+  set :public, "#{dir}/public"
+    
   set :hostname,    "itjo.bs"
   set :api_key,     ""
 
