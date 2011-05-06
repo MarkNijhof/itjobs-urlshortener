@@ -22,7 +22,7 @@ app = Firefly::Server.new do
 
   # A secure key to be used with 'share to twitter'
   # set :sharing_key,    "set-a-long-secure-key-here"
-  # set :sharing_key,      ""
+  set :sharing_key,      ""
 
   # Currently only twitter is supported
   # set :sharing_targets, [:twitter, :hyves, :facebook]
