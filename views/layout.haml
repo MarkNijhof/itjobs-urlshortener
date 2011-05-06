@@ -17,8 +17,45 @@
     #background-img
       %img{:alt=>"", :src=>"/images/layout/background.jpg", :style=>"width: 100%; left: 0px; height: auto;"}
 
+    #header
+      .left
+      .right
+        %a{:href => url_for(:controller => :'employer/jobs', :action => :edit)}
+          #add-button
+            #add-button-link
+              add a job
+      .middle
+        %a{:href => '/'}
+          #logo
 
+    :javascript
+      document.observe("dom:loaded", function() {
+        setInterval(function(){
+          if ($('add-button-link').innerHTML == 'add a job') {
+            $('add-button-link').update();
+            $('add-button-link').insert('$100/30 days');
+          } else {
+            $('add-button-link').update();
+            $('add-button-link').insert('add a job');
+          }
+        }, 10000);
+      });
+        
     #content.content
       = yield
     
+    #copyright.grayText
+      ITJo.bs &copy; 2011 cre8ive thought
 
+    - if ::Rails.env.production? # Analytics
+      :javascript
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-116586-11']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    -
