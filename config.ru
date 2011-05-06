@@ -3,13 +3,7 @@ require 'firefly'
 
 disable :run
 
-app = Firefly::Server.new do
-
-  dir = File.dirname(__FILE__)
-
-  set :views, "#{dir}/views"
-  set :public, "#{dir}/public"
-    
+app = Firefly::Server.new do    
   set :hostname,    "itjo.bs"
   set :api_key,     ""
 
@@ -42,5 +36,15 @@ app = Firefly::Server.new do
   # If you're unsure what to use, open IRB console and run `'%x' % rand(2**255)`
   set :session_secret, "9c9e4f86c5b37ccb16b6eb32445c418ac6a0c9268a60742e20edfd88668db90"
 end
+
+module Firefly
+  class Server
+    dir = File.dirname(__FILE__)
+
+    set :views, "#{dir}/views"
+    set :public, "#{dir}/public"
+  end
+end
+
 
 run app
