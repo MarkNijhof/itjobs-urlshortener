@@ -1,9 +1,10 @@
 source 'http://rubygems.org'
 
-gem 'firefly', '1.5.3'
-gem 'do_mysql', '0.10.5'
-gem 'dm-postgres-adapter', '1.0.2'
+gem 'sinatra', '1.2.6'
+gem 'redis', '2.2.0'
+gem 'json', '1.5.1'
 
 group :test, :development do
+  gem 'shotgun', '0.9'
   gem "heroku" ,'2.0.5'
 end
