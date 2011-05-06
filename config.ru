@@ -16,7 +16,7 @@ app = Firefly::Server.new do
   # You can use MySQL as well. 
   # Make sure to install the do_mysql gem:
   #    sudo gem install do_mysql
-  set :database,    "mysql://root@localhost/firefly"
+  set :database,    ENV['DATABASE_URL']
 
   # If you want to enable 'share to twitter'
 
