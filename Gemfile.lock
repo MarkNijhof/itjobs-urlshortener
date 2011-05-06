@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:MarkNijhof/firefly.git
+  remote: git://github.com/MarkNijhof/firefly.git
   revision: 4a6db31c1819c912d6e72da65cd6cf8fd3958e1b
   specs:
     firefly (1.5.4)
