@@ -34,7 +34,7 @@ app = Firefly::Server.new do
 
   # Set your session secret here.
   # If you're unsure what to use, open IRB console and run `'%x' % rand(2**255)`
-  set :session_secret, "change-me"
+  set :session_secret, "9c9e4f86c5b37ccb16b6eb32445c418ac6a0c9268a60742e20edfd88668db90"
 end
 
 run app

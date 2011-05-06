@@ -56,6 +56,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  do_mysql
-  firefly
+  do_mysql (= 0.10.5)
+  firefly (= 1.5.3)
   heroku (= 1.15.0)
