@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'firefly', '1.5.3'
+gem 'firefly', :git => 'git@github.com:MarkNijhof/firefly.git'
 gem 'do_mysql', '0.10.5'
 gem 'dm-postgres-adapter'
 
