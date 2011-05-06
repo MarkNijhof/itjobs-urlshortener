@@ -3,12 +3,13 @@
   %head
     %title= "ITJo.bs - Url Shortner"
 
-    = stylesheet_link 'compiled/screen.css', :media => 'screen, projection'
-    = stylesheet_link 'compiled/print.css', :media => 'print'
+    = %link{ :rel => "stylesheet", :href => u('compiled/screen.css'), :media => 'screen, projection' }
+    = %link{ :rel => "stylesheet", :href => u('compiled/print.css', :media => 'print' }
     /[if lt IE 8]
-      = stylesheet_link 'compiled/ie.css', :media => 'screen, projection'
+      = %link{ :rel => "stylesheet", :href => u('compiled/ie.css', :media => 'screen, projection' }
 
-    = javascript_include_tag 'prototype.js', :defaults
+    %script{ :type => "text/javascript", :src => u('prototype.js') }
+    %script{ :type => "text/javascript", :src => u('application.js') }
         
     %link{:rel=>"shortcut icon", :type=>"image/x-icon", :href=>"/favicon.ico"}
     
