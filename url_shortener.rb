@@ -31,7 +31,8 @@ class UrlShortener < Sinatra::Base
       
     shortner = {
       :original_url => params[:original_url],
-      :short_url => short_url
+      :short_url => short_url,
+      :create_date => Time.new.inspect
     }
   
     REDIS.set("short_url:#{short_url}", shortner.to_json)
