@@ -1,4 +1,4 @@
 require 'sinatra'
-require 'urlshortner'
+require './url_shortener.rb'
 
-run Sinatra.application
+run UrlShortener

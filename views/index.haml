@@ -1,78 +1,81 @@
-.sidebox
-  %h2 Bookmarklet
-
-  %p
-    Drag the following link to your bookmarks. Click it to shorten the URL to the page you're currently viewing.
-  %p
-    %a{ :href => "javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),key=enc('#{@config[:api_key]}'),f='http://#{@config[:hostname]}/api/add',l=d.location,p='?visual=1&api_key='+key+'&url='+enc(l.href),u=f+p;try{if(!/^(.*\.)?tumblrzzz[^.]*$/.test(l.host))throw(0);tstbklt();}catch(z){a%20=function(){if(!w.open(u))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)" } Shorten with #{@config[:hostname]}
-
-%h1 How about shortening a URL?
-
-.the_form
-  %form{ :action => '/api/add', :method => 'post' }
-    %input{ :type => "hidden", :name => "visual", :value => "1" }
-    %p
-      %input.big_url{ :type => 'text', :placeholder => "Paste your long URL here...", :name => 'url', :id => 'url', :size => 40, :autocomplete => "off", :spellcheck => 'false' }
-      %span{ :style => "font-size: 1.8em;" }= '>'
-      %input.big_url{ :type => 'text', :placeholder => "Optional short code", :name => 'short', :id => 'short', :size => 20, :autocomplete => "off", :spellcheck => 'false' }
-    %p
-      %input.big_url{ :type => 'submit', :name => 'submit', :id => 'submit', :value => "Make it short!" }
-
-- if @highlight
-  %h2 Your short URL
-
-  %table
-    %tr
-      %td.label Short URL
-      %td.label Full URL
-      %td.label Clicks
-      %td.label Shortened at
-      %td.label &nbsp;
-    %tr.highlighted
-      %td.value
-        %input{ :type => "text", :value => short_url(@highlight), :class => 'short_url', :size => 21 }
-      %td.value.fill <a href="#{@highlight.url}">#{truncate @highlight.url, 130}</a>
-      %td.value.center= @highlight.clicks
-      %td.value= @highlight.created_at.strftime("%Y-%m-%d %H:%M")
-      %td.value
-        %a{ :href => "http://twitter.com/home?status=#{tweet(short_url(@highlight))}" }
-          %img.twitter{ :src => "/images/twitter.png", :width => "16", :height => "16" }
-
-%h2 Recently shortened
-
-%table
-  %tr
-    %td.label(nowrap='nowrap') Short URL <a href="/?s=code&d=asc">▲</a> <a href="/?s=code&d=desc">▼</a>
-    %td.label(nowrap='nowrap') Full URL <a href="/?s=url&d=asc">▲</a> <a href="/?s=url&d=desc">▼</a>
-    %td.label(nowrap='nowrap') Clicks <a href="/?s=clicks&d=asc">▲</a> <a href="/?s=clicks&d=desc">▼</a>
-    %td.label(nowrap='nowrap') Shortened At <a href="/?s=created_at&d=asc">▲</a> <a href="/?s=created_at&d=desc">▼</a>
-    %td.label &nbsp;
-  - @urls.each do |url|
-    %tr{ :class => is_highlighted?(url) ? 'highlighted' : '' }
-      %td.value
-        %input{ :type => "text", :value => short_url(url), :class => 'short_url', :size => 31 }
-      %td.value.fill <a href="#{url.url}">#{truncate url.url, 130}</a>
-      %td.value.center= url.clicks
-      %td.value= url.created_at.strftime("%Y-%m-%d %H:%M")
-      %td.value
-        %a{ :href => "http://twitter.com/home?status=#{tweet(short_url(url))}" }
-          %img.twitter{ :src => "/images/twitter.png", :width => "16", :height => "16" }
-
-:javascript
-  $(document).ready(function() {
-    $('input.short_url').each(function(index) {
-      $(this).mouseup(function() { $(this).select(); });
+- if @url.nil?
+  :javascript
+    document.observe("dom:loaded", function() {
+      $('original_url').focus();
     });
+-
 
-    if (window.location.search == "") {
-      var pathname = window.location.pathname + '?s=created_at&d=desc';
-    } else {
-      var pathname = window.location.pathname + window.location.search;
-    }
+%h1
+  ITJo.bs url shortener
 
-    $('#main table tr td.label a').each(function(index) {
-      if ($(this).attr('href') == pathname) {
-        $(this).addClass('highlight');
-      }
-    });
-  });
+#err.warning= env['sinatra.error']
+
+%form#urlShortenerForm{:method => 'post', :action => '/', :name => 'urlShortenerForm'}
+
+  .group-box.width-3-4
+
+    - unless @url.nil?
+      .partial-box.width-3-4
+        %h2
+          Your short url
+
+        .padding
+          %div{:style => "float: left;"}
+            #{@url[:original_url]}
+            &nbsp;
+            %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px;"}
+            &nbsp;
+            %a#text{:href => "http://itjo.bs/#{@url[:short_url]}"} http://itjo.bs/#{@url[:short_url]}
+            &nbsp;
+            &nbsp;
+          %div{:style => "padding-top: 3px; float: left;"}
+            %object{:classid => "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000",
+                    :width => "110",
+                    :height => "14",
+                    :id =>"clippy"}
+              %param{:name => "movie",              :value => "/flash/clippy.swf" }
+              %param{:name => "allowScriptAccess",  :value => "always" }
+              %param{:name => "quality",            :value => "high" }
+              %param{:name => "scale",              :value => "noscale" }
+              %param{:NAME => "FlashVars",          :value => "text=http://itjo.bs/#{@url[:short_url]}" }
+              %param{:name => "bgcolor",            :value => "#faf0e1" }
+              %embed{:src => "/flash/clippy.swf",
+                       :width => "110",
+                       :height => "14",
+                       :name => "clippy",
+                       :quality => "high",
+                       :allowScriptAccess => "always",
+                       :type => "application/x-shockwave-flash",
+                       :pluginspage => "http://www.macromedia.com/go/getflashplayer",
+                       :FlashVars =>"text=http://itjo.bs/#{@url[:short_url]}",
+                       :bgcolor => "#faf0e1" }
+          
+          
+          %br
+          %br
+    -
+    
+    .partial-box.width-3-4
+      .padding
+        .sidebar-label Paste your long URL here:
+        .field
+          %input#original_url{:name => 'original_url'}
+        %button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
+          Shorten
+
+    .partial-box.width-3-4
+      .padding
+        Give the short urls pointing to your job postings the right look and feel. Instead of some meaningless url use ITJo.bs url shortener to make clear to your readers that the url will point to an IT Job posting or similar web page.
+
+    .partial-box.width-3-4
+      .padding
+        More to come later, until then we hope you will enjoy this url shortener.
+
+  .group-box.width-1-4
+    #side-bar.width-1-4
+
+      .partial-box.width-1-4
+        .padding
+          Drag the following link to your bookmarks. Click it to shorten the URL to the page you're currently viewing.
+          %a{ :href => "javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),f='http://ITJo.bs/',l=d.location,p='?original_url='+enc(l.href),u=f+p;try{if(!/^(.*\.)?tumblrzzz[^.]*$/.test(l.host))throw(0);tstbklt();}catch(z){a%20=function(){if(!w.open(u))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)" } Shorten with ITJo.bs
+

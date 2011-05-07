@@ -3,13 +3,13 @@
   %head
     %title= "ITJo.bs - Url Shortner"
 
-    %link{ :rel => "stylesheet", :href => u('/stylesheets/compiled/screen.css'), :media => 'screen, projection' }
-    %link{ :rel => "stylesheet", :href => u('/stylesheets/compiled/print.css'), :media => 'print' }
+    %link{ :rel => "stylesheet", :href => '/stylesheets/compiled/screen.css', :media => 'screen, projection' }
+    %link{ :rel => "stylesheet", :href => '/stylesheets/compiled/print.css', :media => 'print' }
     /[if lt IE 8]
-      %link{ :rel => "stylesheet", :href => u('/stylesheets/compiled/ie.css'), :media => 'screen, projection' }
+      %link{ :rel => "stylesheet", :href => '/stylesheets/compiled/ie.css', :media => 'screen, projection' }
 
-    %script{ :type => "text/javascript", :src => u('/javascripts/prototype.js') }
-    %script{ :type => "text/javascript", :src => u('/javascripts/application.js') }
+    %script{ :type => "text/javascript", :src => '/javascripts/prototype.js' }
+    %script{ :type => "text/javascript", :src => '/javascripts/application.js' }
         
     %link{:rel=>"shortcut icon", :type=>"image/x-icon", :href=>"/favicon.ico"}
     
@@ -23,19 +23,6 @@
       .middle
         %a{:href => '/'}
           #logo
-
-    :javascript
-      document.observe("dom:loaded", function() {
-        setInterval(function(){
-          if ($('add-button-link').innerHTML == 'add a job') {
-            $('add-button-link').update();
-            $('add-button-link').insert('$100/30 days');
-          } else {
-            $('add-button-link').update();
-            $('add-button-link').insert('add a job');
-          }
-        }, 10000);
-      });
         
     #content.content
       = yield

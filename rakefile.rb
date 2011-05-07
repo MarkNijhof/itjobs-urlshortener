@@ -4,13 +4,13 @@
 require 'rake'
 require '../secret_stuff/itjobs-urlshortner/rakefile' if FileTest.exists?('../secret_stuff/itjobs-urlshortner/rakefile.rb')
 
-# task :run => [:set_development_environment] do
-#   sh "rails server"
-#   # sh "shotgun config.ru -s thin -E development" 
-#   # sh "thin start -R config.ru " #-a local.cre8ivethought.com"
-#   # sh "rackup -o local.cre8ivethought.com -p 3000"
-# end
-# 
+task :run => [:set_development_environment] do
+  sh "shotgun"
+  # sh "shotgun config.ru -s thin -E development" 
+  # sh "thin start -R config.ru " #-a local.cre8ivethought.com"
+  # sh "rackup -o local.cre8ivethought.com -p 3000"
+end
+
 # task :test => [:set_test_environment] do
 #   sh "bundle exec watchr"
 # end
