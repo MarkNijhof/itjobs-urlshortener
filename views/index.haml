@@ -59,7 +59,7 @@
       .padding
         .sidebar-label Paste your long URL here:
         .field
-          %input#original_url{:name => 'original_url'}
+          %input#original_url{:name => 'original_url', :value => "#{@original_url}"}
         %button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
           Shorten
 

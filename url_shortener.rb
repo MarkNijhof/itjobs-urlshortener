@@ -17,6 +17,7 @@ class UrlShortener < Sinatra::Base
   end
 
   get '/' do 
+    @original_url = params[:original_url] unless params[:original_url].nil?
     haml :index 
   end
 
