@@ -14,6 +14,14 @@
 
   .group-box.width-3-4
 
+    .partial-box.width-3-4
+      .padding
+        .sidebar-label Paste your long URL here:
+        .field
+          %input#original_url{:name => 'original_url', :value => "#{@original_url}"}
+        %button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
+          Shorten
+
     - unless @url.nil?
       .partial-box.width-3-4
         %h2
@@ -49,19 +57,11 @@
                        :pluginspage => "http://www.macromedia.com/go/getflashplayer",
                        :FlashVars =>"text=http://itjo.bs/#{@url[:short_url]}",
                        :bgcolor => "#faf0e1" }
-          
-          
+
+
           %br
           %br
     -
-    
-    .partial-box.width-3-4
-      .padding
-        .sidebar-label Paste your long URL here:
-        .field
-          %input#original_url{:name => 'original_url', :value => "#{@original_url}"}
-        %button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
-          Shorten
 
     .partial-box.width-3-4
       .padding
