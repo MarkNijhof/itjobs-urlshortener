@@ -18,6 +18,7 @@ class UrlShortener < Sinatra::Base
 
   get '/' do 
     @original_url = params[:original_url] unless params[:original_url].nil?
+    @urls_shortened = REDIS.get("short_url")
     haml :index 
   end
 
@@ -25,7 +26,8 @@ class UrlShortener < Sinatra::Base
     uri = URI::parse(params[:original_url])
     raise "Invalid URL" unless uri.kind_of? URI::HTTP or uri.kind_of? URI::HTTPS
   
-    short_url = REDIS.incr("short_url").to_s(36)
+    @urls_shortened = REDIS.incr("short_url")
+    short_url = @urls_shortened.to_s(36)
       
     shortner = {
       :original_url => params[:original_url],
