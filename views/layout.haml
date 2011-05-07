@@ -30,7 +30,7 @@
     #copyright.grayText
       ITJo.bs &copy; 2011 cre8ive thought
 
-    - if ENV['production'] # Analytics
+    - if ENV['RACK_ENV'] == 'production' # Analytics
       :javascript
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-116586-11']);
