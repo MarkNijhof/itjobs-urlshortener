@@ -9,6 +9,8 @@ require 'sinatra/base'
 
 class UrlShortener < Sinatra::Base
 
+  set :root, File.dirname(__FILE__)
+
   configure do
     uri = URI.parse(ENV["REDISTOGO_URL"])
     REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
