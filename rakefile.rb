@@ -5,8 +5,8 @@ require 'rake'
 require '../secret_stuff/itjobs-urlshortner/rakefile' if FileTest.exists?('../secret_stuff/itjobs-urlshortner/rakefile.rb')
 
 task :run => [:set_development_environment] do
-  sh "thin start"
-  # sh "shotgun config.ru -s thin -E development" 
+  # sh "thin start"
+  sh "shotgun config.ru -s thin -E production" 
   # sh "thin start -R config.ru " #-a local.cre8ivethought.com"
   # sh "rackup -o local.cre8ivethought.com -p 3000"
 end

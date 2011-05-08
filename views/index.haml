@@ -8,7 +8,12 @@
 %h1
   ITJo.bs url shortener
 
-#err.warning= env['sinatra.error']
+- unless env['sinatra.error'].nil?
+  .group-box.width-4-4
+    .partial-box.width-4-4{:style => 'background-color: #fd7575;'}
+      .padding
+        #err.warning= env['sinatra.error']
+-
 
 %form#urlShortenerForm{:method => 'post', :action => '/', :name => 'urlShortenerForm'}
 
