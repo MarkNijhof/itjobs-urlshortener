@@ -22,18 +22,24 @@
         %button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
           Shorten
 
-    - unless @url.nil?
+    - unless @shortener.nil?
       .partial-box.width-3-4
         %h2
           Your short url
 
         .padding
           %div{:style => "float: left;"}
-            #{@url[:original_url]}
+            #{@shortener['original_url']}
             &nbsp;
             %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px;"}
             &nbsp;
-            %a#text{:href => "http://itjo.bs/#{@url[:short_url]}"} http://itjo.bs/#{@url[:short_url]}
+            - unless @shortened_counter.nil?
+              #{@shortened_counter}
+              &nbsp;
+              %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px;"}
+              &nbsp;
+            -
+            %a#text{:href => "http://itjo.bs/#{@shortener['short_url']}"} http://itjo.bs/#{@shortener['short_url']}
             &nbsp;
             &nbsp;
           %div{:style => "padding-top: 3px; float: left;"}
@@ -45,7 +51,7 @@
               %param{:name => "allowScriptAccess",  :value => "always" }
               %param{:name => "quality",            :value => "high" }
               %param{:name => "scale",              :value => "noscale" }
-              %param{:NAME => "FlashVars",          :value => "text=http://itjo.bs/#{@url[:short_url]}" }
+              %param{:NAME => "FlashVars",          :value => "text=http://itjo.bs/#{@shortener['short_url']}" }
               %param{:name => "bgcolor",            :value => "#faf0e1" }
               %embed{:src => "/flash/clippy.swf",
                        :width => "110",
@@ -55,7 +61,7 @@
                        :allowScriptAccess => "always",
                        :type => "application/x-shockwave-flash",
                        :pluginspage => "http://www.macromedia.com/go/getflashplayer",
-                       :FlashVars =>"text=http://itjo.bs/#{@url[:short_url]}",
+                       :FlashVars =>"text=http://itjo.bs/#{@shortener['short_url']}",
                        :bgcolor => "#faf0e1" }
 
 
@@ -90,5 +96,5 @@
       - unless @urls_shortened.nil?
         .partial-box.width-1-4
           .padding
-            The ITJo.bs url shortener has up to now shortened <b>#{@urls_shortened}</b> urls.
+            The ITJo.bs url shortener has up to now shortened <b>#{@urls_shortened}</b> urls and expanded <b>#{@urls_expanded}</b> short urls back to the original url.
 
