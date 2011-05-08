@@ -24,9 +24,6 @@ class UrlShortener < Sinatra::Base
   end
 
   post '/' do
-    uri = URI::parse(params[:original_url])
-    raise "Invalid URL: a URL need to start with either http:// or https://" unless uri.kind_of? URI::HTTP or uri.kind_of? URI::HTTPS
-  
     @urls_shortened = REDIS.incr("counter:urls_shortened")
     @urls_expanded  = REDIS.get("counter:urls_expanded")
     short_url = @urls_shortened.to_s(36)
