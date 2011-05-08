@@ -25,7 +25,7 @@ class UrlShortener < Sinatra::Base
 
   post '/' do
     uri = URI::parse(params[:original_url])
-    raise "Invalid URL" unless uri.kind_of? URI::HTTP or uri.kind_of? URI::HTTPS
+    raise "Invalid URL: a URL need to start with either http:// or https://" unless uri.kind_of? URI::HTTP or uri.kind_of? URI::HTTPS
   
     @urls_shortened = REDIS.incr("counter:urls_shortened")
     @urls_expanded  = REDIS.get("counter:urls_expanded")
@@ -38,14 +38,14 @@ class UrlShortener < Sinatra::Base
     }
   
     save_result = REDIS.set("short_url:#{short_url}", @shortener.to_json)
-    raise "Unable to save the short url" unless save_result == "OK"
+    raise "Unable to save the short URL" unless save_result == "OK"
 
     haml :index
   end
 
   get '/:short_url' do 
     shortner_json = REDIS.get("short_url:#{params[:short_url]}")
-    raise "Url has not been shorted" if shortner_json.nil?
+    raise "URL has not been shorted" if shortner_json.nil?
 
     REDIS.incr("counter:short_url:#{params[:short_url]}")
     REDIS.incr("counter:urls_expanded")
@@ -54,7 +54,7 @@ class UrlShortener < Sinatra::Base
 
   get '/:short_url/inspect' do 
     shortner_json = REDIS.get("short_url:#{params[:short_url]}")
-    raise "Url has not been shorted" if shortner_json.nil?
+    raise "URL has not been shorted" if shortner_json.nil?
   
     @shortener         = JSON.parse(shortner_json)
     @shortened_counter = REDIS.get("counter:short_url:#{params[:short_url]}") || 0
@@ -64,6 +64,7 @@ class UrlShortener < Sinatra::Base
   end
 
   error do 
+    @original_url = params[:original_url] unless params[:original_url].nil?
     haml :index 
   end
 end
