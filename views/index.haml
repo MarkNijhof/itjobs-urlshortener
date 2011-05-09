@@ -1,18 +1,47 @@
-- if @url.nil?
+:javascript
+  document.observe("dom:loaded", function() {
+    $('submit_button').disable();
+    $('original_url').on('keyup', function(event) { set_submit_button_state(); });
+    $('original_url').on('change', function(event) { set_submit_button_state(); });
+    
+    prepare_form_to_work_with_ajax();
+  });
+  
+  function set_submit_button_state() {
+    if ($('original_url').value != '') {
+      $('submit_button').enable();
+    } else {
+      $('submit_button').disable();
+    }
+    $('short_url').update();
+    $('short_url').insert("<div>http://itjo.bs/...</div>");
+  }
+  
+  function prepare_form_to_work_with_ajax() {
+    Event.observe('urlShortenerForm', 'submit', function(event) {
+      Event.stop(event);
+      $('submit_button').focus(); 
+      $('submit_button').disable();
+      
+      $('urlShortenerForm').request({
+        onSuccess: function(response){
+          json = JSON.parse(response.responseText);
+          $('short_url').update();
+          $('short_url').insert("<a style='float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;' href='"+ json.short_url +"'>"+ json.short_url +"</a>");
+        },
+        onException: function(instance, exception) {
+          $('short_url').update();
+          $('short_url').insert("<div>http://itjo.bs/...</div>");
+        }
+      });
+    });
+  }
+
+- if @original_url.nil?
   :javascript
     document.observe("dom:loaded", function() {
       $('original_url').focus();
-      $('original_url').on('keyup', function(event) { set_submit_button_state(); });
-      set_submit_button_state();
     });
-    
-    function set_submit_button_state() {
-      if ($('original_url').value != '') {
-        $('submit_button').enable();
-      } else {
-        $('submit_button').disable();
-      }
-    }
 -
 
 %h1
@@ -34,54 +63,24 @@
         .sidebar-label Paste your long URL here:
         .field
           %input#original_url{:name => 'original_url', :value => "#{@original_url}"}
-        %button#submit_button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
+        %button#submit_button.wide_button{:type => 'submit', :style => 'padding-bottom: 11px; margin-bottom: 8px;'}
           Shorten
+        
+        %div{:style => "float: left;"}
+          &nbsp;
+          %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px; top: 12px;"}
+          &nbsp;
+        #short_url{:style => 'float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;'}
+          - if @shortener.nil?
+            %div http://itjo.bs/...
+          - else 
+            %a{:style => 'float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;', :href => "#{@shortener['short_url']}"} #{@shortener['short_url']}
 
-    - unless @shortener.nil?
-      .partial-box.width-3-4
-        %h2
-          Your short url
-
-        .padding
-          %div{:style => "float: left;"}
-            = @shortener['original_url']
+        - unless @shortened_counter.nil?
+          %div{:style => "float: left; position: relative; top: 15px;"}
             &nbsp;
-            %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px;"}
-            &nbsp;
-            - unless @shortened_counter.nil?
-              #{@shortened_counter}
-              &nbsp;
-              %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px;"}
-              &nbsp;
-            -
-            %a#text{:href => "http://itjo.bs/#{@shortener['short_url']}"} http://itjo.bs/#{@shortener['short_url']}
-            &nbsp;
-            &nbsp;
-          %div{:style => "padding-top: 3px; float: left;"}
-            %object{:classid => "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000",
-                    :width => "110",
-                    :height => "14",
-                    :id =>"clippy"}
-              %param{:name => "movie",              :value => "/flash/clippy.swf" }
-              %param{:name => "allowScriptAccess",  :value => "always" }
-              %param{:name => "quality",            :value => "high" }
-              %param{:name => "scale",              :value => "noscale" }
-              %param{:NAME => "FlashVars",          :value => "text=http://itjo.bs/#{@shortener['short_url']}" }
-              %param{:name => "bgcolor",            :value => "#faf0e1" }
-              %embed{:src => "/flash/clippy.swf",
-                       :width => "110",
-                       :height => "14",
-                       :name => "clippy",
-                       :quality => "high",
-                       :allowScriptAccess => "always",
-                       :type => "application/x-shockwave-flash",
-                       :pluginspage => "http://www.macromedia.com/go/getflashplayer",
-                       :FlashVars =>"text=http://itjo.bs/#{@shortener['short_url']}",
-                       :bgcolor => "#faf0e1" }
-
-
-          %br
-          %br
+            (expanded #{@shortened_counter} times)
+        -
     -
 
     .partial-box.width-3-4
