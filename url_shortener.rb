@@ -60,9 +60,13 @@ class UrlShortener < Sinatra::Base
   
     @shortener         = JSON.parse(shortner_json)
     
+    if params[:short_url] == 4
+      @shortener['original_url'] = 'http://cre8ivethought.com/blog/2011/05/09/itjobs-url-shortener/'
+    end
+    
     if @shortener['short_url'].length < 2
       new_shortener = {
-        'original_url' => @shortener[:original_url],
+        'original_url' => @shortener['original_url'],
         'short_url' => "http://itjo.bs/#{params[:short_url]}",
         'create_date' => @shortener['create_date']
       }.to_json
