@@ -2,7 +2,24 @@
   :javascript
     document.observe("dom:loaded", function() {
       $('original_url').focus();
+      $('original_url').on('keyup', function(event) { set_submit_button_state(); });
+      $('submit_button').on('click', function(event) { return_focus_after_clicking_disabled_button(); });
+      set_submit_button_state();
     });
+    
+    function set_submit_button_state() {
+      if ($('original_url').value != '') {
+        $('submit_button').enable();
+      } else {
+        $('submit_button').disable();
+      }
+    }
+    
+    function return_focus_after_clicking_disabled_button() {
+      if ($('submit_button').disabled) {
+        $('original_url').focus();
+      }
+    }
 -
 
 %h1
@@ -24,7 +41,7 @@
         .sidebar-label Paste your long URL here:
         .field
           %input#original_url{:name => 'original_url', :value => "#{@original_url}"}
-        %button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
+        %button#submit_button.wide_button{:type => 'submit', :style => 'padding-top: 0px; margin-bottom: 8px;'}
           Shorten
 
     - unless @shortener.nil?

@@ -1029,7 +1029,7 @@ body {
 }
 
 /* line 19, ../../../app/stylesheets/partials/_buttons.sass */
-.wide_button-disabled {
+.wide_button:disabled {
   position: relative;
   width: 156px;
   height: 40px;
