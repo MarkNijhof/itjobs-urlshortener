@@ -10,8 +10,6 @@ require 'sinatra/base'
 class UrlShortener < Sinatra::Base
 
   set :root, File.dirname(__FILE__)
-  set :raise_errors, false
-  set :show_exceptions, false
   
   :escape_html 
   
@@ -40,7 +38,6 @@ class UrlShortener < Sinatra::Base
   
     save_result = REDIS.set("short_url:#{short_url}", @shortener.to_json)
     raise "Unable to save the short URL" unless save_result == "OK"
-
     haml :index
   end
 
@@ -64,7 +61,7 @@ class UrlShortener < Sinatra::Base
     haml :index
   end
 
-  error do 
+  error 400..510 do 
     @original_url = params[:original_url] unless params[:original_url].nil?
     haml :index 
   end
