@@ -10,6 +10,7 @@ require 'sinatra/base'
 class UrlShortener < Sinatra::Base
 
   set :root, File.dirname(__FILE__)
+  :escape_html 
   
   configure do
     uri = URI.parse(ENV["REDISTOGO_URL"])
