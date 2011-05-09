@@ -13,6 +13,9 @@
     } else {
       $('submit_button').disable();
     }
+    if ($('counter') != undefined) {
+      $('counter').update();
+    }
     $('short_url').update();
     $('short_url').insert("<div>http://itjo.bs/...</div>");
   }
@@ -77,7 +80,7 @@
             %a{:style => 'float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;', :href => "#{@shortener['short_url']}"} #{@shortener['short_url']}
 
         - unless @shortened_counter.nil?
-          %div{:style => "float: left; position: relative; top: 15px;"}
+          %div#counter{:style => "float: left; position: relative; top: 15px;"}
             &nbsp;
             (expanded #{@shortened_counter} times)
         -
