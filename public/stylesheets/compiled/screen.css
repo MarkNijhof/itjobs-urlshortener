@@ -985,6 +985,7 @@ body {
 #background-img {
   position: fixed;
   top: 0px;
+  width: 100%;
 }
 
 /* line 5, ../../../app/stylesheets/partials/_common.sass */
