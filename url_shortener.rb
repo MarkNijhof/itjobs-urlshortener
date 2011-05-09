@@ -10,6 +10,9 @@ require 'sinatra/base'
 class UrlShortener < Sinatra::Base
 
   set :root, File.dirname(__FILE__)
+  set :raise_errors, false
+  set :show_exceptions, true if development? 
+  
   :escape_html 
   
   configure do
