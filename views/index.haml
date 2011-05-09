@@ -44,7 +44,7 @@
 
         .padding
           %div{:style => "float: left;"}
-            #{@shortener['original_url']}
+            &= @shortener['original_url']
             &nbsp;
             %img{:src => "/images/layout/content/little-green-arrow.png", :alt => "", :style => "position: relative; margin: 0px 0px -2px 0px;"}
             &nbsp;
