@@ -59,6 +59,17 @@ class UrlShortener < Sinatra::Base
     raise "URL has not been shorted" if shortner_json.nil?
   
     @shortener         = JSON.parse(shortner_json)
+    
+    if @shortener['short_url'].length < 2
+      new_shortener = {
+        'original_url' => @shortener[:original_url],
+        'short_url' => "http://itjo.bs/#{params[:short_url]}",
+        'create_date' => @shortener['create_date']
+      }.to_json
+  
+      save_result = REDIS.set("short_url:#{params[:short_url]}", new_shortener)
+    end
+    
     @original_url      = @shortener['original_url']
     @shortened_counter = REDIS.get("counter:short_url:#{params[:short_url]}") || 0
     @urls_shortened    = REDIS.get("counter:urls_shortened")
