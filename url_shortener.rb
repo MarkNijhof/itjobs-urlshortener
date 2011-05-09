@@ -62,6 +62,7 @@ class UrlShortener < Sinatra::Base
   end
 
   error 400..510 do 
+    status 200    
     @original_url = params[:original_url] unless params[:original_url].nil?
     haml :index 
   end
