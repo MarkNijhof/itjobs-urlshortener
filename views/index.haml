@@ -3,7 +3,6 @@
     document.observe("dom:loaded", function() {
       $('original_url').focus();
       $('original_url').on('keyup', function(event) { set_submit_button_state(); });
-      $('submit_button').on('click', function(event) { return_focus_after_clicking_disabled_button(); });
       set_submit_button_state();
     });
     
@@ -12,12 +11,6 @@
         $('submit_button').enable();
       } else {
         $('submit_button').disable();
-      }
-    }
-    
-    function return_focus_after_clicking_disabled_button() {
-      if ($('submit_button').disabled) {
-        $('original_url').focus();
       }
     }
 -
