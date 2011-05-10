@@ -63,6 +63,7 @@ class UrlShortener < Sinatra::Base
     @shortened_counter = REDIS.get("counter:short_url:#{params[:short_url]}") || 0
     @urls_shortened    = REDIS.get("counter:urls_shortened")
     @urls_expanded     = REDIS.get("counter:urls_expanded")
+    @urls_inspected    = REDIS.incr("counter:urls_inspected")
     haml :index
   end
 
