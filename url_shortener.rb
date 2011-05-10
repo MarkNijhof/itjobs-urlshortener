@@ -45,15 +45,6 @@ class UrlShortener < Sinatra::Base
     end
   end
 
-  get '/:short_url' do 
-    shortner_json = REDIS.get("short_url:#{params[:short_url]}")
-    raise "URL has not been shorted" if shortner_json.nil?
-
-    REDIS.incr("counter:short_url:#{params[:short_url]}")
-    REDIS.incr("counter:urls_expanded")
-    redirect JSON.parse(shortner_json)["original_url"]
-  end
-
   get '/:short_url/inspect' do 
     shortner_json = REDIS.get("short_url:#{params[:short_url]}")
     raise "URL has not been shorted" if shortner_json.nil?
@@ -65,6 +56,18 @@ class UrlShortener < Sinatra::Base
     @urls_expanded     = REDIS.get("counter:urls_expanded")
     @urls_inspected    = REDIS.incr("counter:urls_inspected")
     haml :index
+  end
+
+  get '/*' do 
+    redirect "/#{params[:splat][0][0, params[:splat][0].length - 1]}/inspect" and return if params[:splat][0][-1, 1] == " "
+    
+    short_url = params[:splat][0]
+    shortner_json = REDIS.get("short_url:#{short_url}")
+    raise "URL has not been shorted" if shortner_json.nil?
+
+    REDIS.incr("counter:short_url:#{short_url}")
+    REDIS.incr("counter:urls_expanded")
+    redirect JSON.parse(shortner_json)["original_url"]
   end
 
   error 400..510 do 
