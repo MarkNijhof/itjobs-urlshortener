@@ -48,7 +48,7 @@
 -
 
 %h1
-  ITJo.bs url shortener
+  IT Jobs url shortener
 
 - unless env['sinatra.error'].nil?
   .group-box.width-4-4
@@ -88,7 +88,7 @@
 
     .partial-box.width-3-4
       .padding
-        Do you want to shorten and share an IT Job posting and you want to give a hint to the receiver of what to expect? Then use the ITJo.bs url shortener because unlike the other good variants on the internet this one reveals the meaning in its own url. 
+        Do you want to shorten and share an IT Job posting and you want to give a hint to the receiver of what to expect? Then use the IT Jobs url shortener because unlike the other good variants on the internet this one reveals the meaning in its own url. 
 
     .partial-box.width-3-4
       %h3
@@ -108,10 +108,10 @@
           %a{ :href => "javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),f='http://ITJo.bs/',l=d.location,p='?original_url='+enc(l.href),u=f+p;try{if(!/^(.*\.)?tumblrzzz[^.]*$/.test(l.host))throw(0);tstbklt();}catch(z){a%20=function(){if(!w.open(u))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)" } Shorten with ITJo.bs
           %br
           %br
-          Then when you are on a page that you want to shorten with the ITJo.bs url shortener just click on the link in your bookmarks and it will redirect you to this page with the url already filled-in.
+          Then when you are on a page that you want to shorten with the IT Jobs url shortener just click on the link in your bookmarks and it will redirect you to this page with the url already filled-in.
 
       - unless @urls_shortened.nil?
         .partial-box.width-1-4
           .padding
-            The ITJo.bs url shortener has up to now shortened <b>#{@urls_shortened}</b> urls and expanded <b>#{@urls_expanded}</b> short urls back to the original url.
+            The IT Jobs url shortener has up to now shortened <b>#{@urls_shortened}</b> urls and expanded <b>#{@urls_expanded}</b> short urls back to the original url.
 
