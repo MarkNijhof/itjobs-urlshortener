@@ -11,10 +11,10 @@ task :run => [:set_development_environment] do
   # sh "rackup -o local.cre8ivethought.com -p 3000"
 end
 
-# task :test => [:set_test_environment] do
-#   sh "bundle exec watchr"
-# end
-# 
+task :test => [:set_test_environment] do
+  sh "rspec spec"
+end
+ 
 # task :neo_stop do
 #   sh "~/neo4j-server-dev/bin/neo4j stop"
 #   sh "~/neo4j-server/bin/neo4j stop"

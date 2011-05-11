@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra'
+require 'haml'
 require 'redis'
 require 'uri'
 require 'json'
@@ -47,7 +48,7 @@ class UrlShortener < Sinatra::Base
 
   get '/:short_url/inspect' do 
     shortner_json = REDIS.get("short_url:#{params[:short_url]}")
-    raise "URL has not been shorted" if shortner_json.nil?
+    raise "URL '/#{params[:short_url]}' has not been shorted" if shortner_json.nil?
   
     @shortener         = JSON.parse(shortner_json)    
     @original_url      = @shortener['original_url']
@@ -63,7 +64,7 @@ class UrlShortener < Sinatra::Base
     
     short_url = params[:splat][0]
     shortner_json = REDIS.get("short_url:#{short_url}")
-    raise "URL has not been shorted" if shortner_json.nil?
+    raise "URL '/#{short_url}' has not been shorted" if shortner_json.nil?
 
     REDIS.incr("counter:short_url:#{short_url}")
     REDIS.incr("counter:urls_expanded")
