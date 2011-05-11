@@ -70,10 +70,10 @@ describe "Url Shortener", :type => :request, :js => true, :redis => true do
     fill_in('original_url', :with => 'http://localhost/')
     click_button('Shorten')
     visit '/1'
-    visit '/1/inspect'
+    visit '/1'
     visit '/1/inspect'
     
-    find('#counter').text.should == "( expanded 1 times and inspected 2 times )"
+    find('#counter').text.should == "( expanded 2 times )"
     
   end
 

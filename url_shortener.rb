@@ -55,7 +55,6 @@ class UrlShortener < Sinatra::Base
     @shortened_counter = REDIS.get("counter:short_url:#{params[:short_url]}") || 0
     @urls_shortened    = REDIS.get("counter:urls_shortened")
     @urls_expanded     = REDIS.get("counter:urls_expanded")
-    @urls_inspected    = REDIS.incr("counter:urls_inspected")
     haml :index
   end
 
@@ -68,6 +67,11 @@ class UrlShortener < Sinatra::Base
 
     REDIS.incr("counter:short_url:#{short_url}")
     REDIS.incr("counter:urls_expanded")
+
+    REDIS.sadd("referrers:short_url:#{short_url}", request.env['HTTP_REFERER'] || 'unknown')
+    REDIS.sadd("user-agents:short_url:#{short_url}", request.env['HTTP_USER_AGENT'] || 'unknown')
+    REDIS.sadd("remote-addresses:short_url:#{short_url}", request.env['REMOTE_ADDR'] || 'unknown')
+
     redirect JSON.parse(shortner_json)["original_url"]
   end
 
