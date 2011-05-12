@@ -87,7 +87,7 @@ DEPENDENCIES
   capybara (= 0.4.1.2)
   haml (= 3.0.25)
   heroku (= 2.0.5)
-  ipaddress
+  ipaddress (= 0.7.5)
   json (= 1.5.1)
   rack-test (= 0.6.0)
   redis (= 2.2.0)
