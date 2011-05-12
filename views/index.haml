@@ -102,18 +102,14 @@
             method: 'get',
             onSuccess: function(response){
               json = JSON.parse(response.responseText);
-              if (json.length > 0) {
-                render_referrer_chart(json);
-              }
+              render_referrer_chart(json);
             }
           });
           new Ajax.Request(countries_url, {
             method: 'get',
             onSuccess: function(response){
               json = JSON.parse(response.responseText);
-              if (json.length > 0) {
-                render_countries_chart(json);
-              }
+              render_countries_chart(json);
             }
           });
 
