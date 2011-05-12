@@ -102,7 +102,7 @@
             method: 'get',
             onSuccess: function(response){
               json = JSON.parse(response.responseText);
-              if (json.count > 0) {
+              if (json.length > 0) {
                 render_referrer_chart(json);
               }
             }
@@ -111,7 +111,7 @@
             method: 'get',
             onSuccess: function(response){
               json = JSON.parse(response.responseText);
-              if (json.count > 0) {
+              if (json.length > 0) {
                 render_countries_chart(json);
               }
             }
