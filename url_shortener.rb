@@ -60,6 +60,39 @@ class UrlShortener < Sinatra::Base
     haml :index
   end
 
+  get '/:short_url/inspect/countries' do 
+    content_type :json
+
+    countries = REDIS.smembers("list:country:short_url:#{params[:short_url]}").to_a
+    keys = countries.map { |country| "counter:country:short_url:#{params[:short_url]}:#{country}" }
+    counters = REDIS.mget(*keys)
+    result = Hash[countries.zip(counters)]
+    
+    result.to_json
+  end
+
+  get '/:short_url/inspect/referrers' do 
+    content_type :json
+
+    referrers = REDIS.smembers("list:referrers:short_url:#{params[:short_url]}").to_a
+    keys = referrers.map { |referrer| "counter:referrers:short_url:#{params[:short_url]}:#{referrer}" }
+    counters = REDIS.mget(*keys)
+    result = Hash[referrers.zip(counters)]
+    
+    result.to_json
+  end
+
+  get '/:short_url/inspect/minutes' do 
+    content_type :json
+
+    minutes = REDIS.smembers("list:time-in-minutes:short_url:#{params[:short_url]}").to_a
+    keys = minutes.map { |minute| "counter:time-in-minutes:short_url:#{params[:short_url]}:#{minute}" }
+    counters = REDIS.mget(*keys)
+    result = Hash[minutes.zip(counters)]
+    
+    result.to_json
+  end
+
   get '/*' do 
     redirect "/#{params[:splat][0][0, params[:splat][0].length - 1]}/inspect" and return if params[:splat][0][-1, 1] == " "
     
@@ -75,8 +108,8 @@ class UrlShortener < Sinatra::Base
       REDIS.sadd("list:time-in-minutes:short_url:#{short_url}", time_in_minutes)
       REDIS.incr("counter:time-in-minutes:short_url:#{short_url}:#{time_in_minutes}")
 
-      REDIS.sadd("list:referrers:short_url:#{short_url}", request.env['HTTP_REFERER'] || 'unknown')
-      REDIS.incr("counter:referrers:short_url:#{short_url}:#{request.env['HTTP_REFERER'] || 'unknown'}")
+      REDIS.sadd("list:referrers:short_url:#{short_url}", (request.env['HTTP_REFERER'] || 'unknown').downcase)
+      REDIS.incr("counter:referrers:short_url:#{short_url}:#{(request.env['HTTP_REFERER'] || 'unknown').downcase}")
 
       country = 'unknown'
       ip_address = nil
@@ -86,8 +119,8 @@ class UrlShortener < Sinatra::Base
       ip_addresses.concat request.env['REMOTE_ADDR'].split(',') unless request.env['REMOTE_ADDR'].nil?
       ip_addresses.each { |address| ip_address = address and break if IPAddress.valid? address }
       country = Net::HTTP.get(URI.parse("http://api.hostip.info/country.php?ip=#{ip_address}")) unless ip_address.nil?
-      REDIS.sadd("list:country:short_url:#{short_url}", country)
-      REDIS.incr("counter:country:short_url:#{short_url}:#{country}")
+      REDIS.sadd("list:country:short_url:#{short_url}", country.downcase)
+      REDIS.incr("counter:country:short_url:#{short_url}:#{country.downcase}")
     end
     redirect JSON.parse(shortner_json)["original_url"]
   end
