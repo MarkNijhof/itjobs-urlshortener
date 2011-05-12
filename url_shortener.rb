@@ -86,8 +86,8 @@ class UrlShortener < Sinatra::Base
       ip_addresses.concat request.env['REMOTE_ADDR'].split(',') unless request.env['REMOTE_ADDR'].nil?
       ip_addresses.each { |address| ip_address = address and break if IPAddress.valid? address }
       country = Net::HTTP.get(URI.parse("http://api.hostip.info/country.php?ip=#{ip_address}")) unless ip_address.nil?
-      REDIS.sadd("list:remote-addresses:short_url:#{short_url}", country)
-      REDIS.incr("counter:remote-addresses:short_url:#{short_url}:#{country}")
+      REDIS.sadd("list:country:short_url:#{short_url}", country)
+      REDIS.incr("counter:country:short_url:#{short_url}:#{country}")
     end
     redirect JSON.parse(shortner_json)["original_url"]
   end
