@@ -72,7 +72,7 @@ class UrlShortener < Sinatra::Base
     keys = countries.map { |country| "counter:country:short_url:#{params[:short_url]}:#{country}" }
     counters = REDIS.mget(*keys)
     result = Hash[countries.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)), 'value' => counter.to_i } })]
-    result['unknown', result.delete('xx')] if result.contains('xx')
+    result['unknown', result.delete('xx')] if result.include?('xx')
     result['unknown', { 'percentage' => 0, 'value' => 0 }] unless result.include?('xx')
 
     total_percentage = 0
