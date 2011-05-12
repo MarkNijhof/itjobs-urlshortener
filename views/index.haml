@@ -94,8 +94,8 @@
         		
         document.observe("dom:loaded", function() {
 
-          var referrers_url = '/#{@short_url}/inspect/referrers';
-          var countries_url = '/#{@short_url}/inspect/countries';
+          var referrers_url = '/#{@short_url}/inspect/referrers?cache=' + new Date().getTime();
+          var countries_url = '/#{@short_url}/inspect/countries?cache=' + new Date().getTime();
           var expanded_counter = #{@expanded_counter};
 
           new Ajax.Request(referrers_url, {

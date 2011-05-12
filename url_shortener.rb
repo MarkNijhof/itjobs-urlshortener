@@ -63,15 +63,18 @@ class UrlShortener < Sinatra::Base
 
   get '/:short_url/inspect/countries' do 
     content_type :json
+    response['Cache-Control'] = "public, max-age=5"
     begin
       expanded_counter  = REDIS.get("counter:short_url:#{params[:short_url]}").to_i || 0
       countries = REDIS.smembers("list:country:short_url:#{params[:short_url]}").to_a
       {}.to_json and return if countries.length == 0
+      
       keys = countries.map { |country| "counter:country:short_url:#{params[:short_url]}:#{country}" }
       counters = REDIS.mget(*keys)
       result = Hash[countries.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)), 'value' => counter.to_i } })]
-      result['unknown'] = result.delete('xx') if results.contains('xx')
-      result['unknown'] = { 'percentage' => 0, 'value' => 0 } unless results.contains('xx')
+      result['unknown', result.delete('xx')] if results.contains('xx')
+      result['unknown', { 'percentage' => 0, 'value' => 0 }] unless result.include?('xx')
+
       total_percentage = 0
       result.each do |key, item| 
         next if key == 'unknown'
@@ -87,14 +90,17 @@ class UrlShortener < Sinatra::Base
 
   get '/:short_url/inspect/referrers' do 
     content_type :json
+    response['Cache-Control'] = "public, max-age=5"
     begin
       expanded_counter  = REDIS.get("counter:short_url:#{params[:short_url]}").to_i || 0
       referrers = REDIS.smembers("list:referrers:short_url:#{params[:short_url]}").to_a
       {}.to_json and return if referrers.length == 0
+    
       keys = referrers.map { |referrer| "counter:referrers:short_url:#{params[:short_url]}:#{referrer}" }
       counters = REDIS.mget(*keys)
       result = Hash[referrers.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)), 'value' => counter.to_i } })]
 
+      result['unknown', [ 'percentage' => 0, 'value' => 0 ]] unless result.include?('unknown')
       total_percentage = 0
       result.each do |key, item| 
         next if key == 'unknown'
@@ -110,6 +116,7 @@ class UrlShortener < Sinatra::Base
 
   get '/:short_url/inspect/minutes' do 
     content_type :json
+    response['Cache-Control'] = "public, max-age=5"
     begin
       minutes = REDIS.smembers("list:time-in-minutes:short_url:#{params[:short_url]}").to_a
       {}.to_json and return if minutes.length == 0
