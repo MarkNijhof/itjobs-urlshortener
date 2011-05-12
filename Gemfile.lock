@@ -26,6 +26,7 @@ GEM
       launchy (>= 0.3.2)
       rest-client (~> 1.6.1)
       term-ansicolor (~> 1.0.5)
+    ipaddress (0.7.5)
     json (1.5.1)
     json_pure (1.5.1)
     launchy (0.3.7)
@@ -86,6 +87,7 @@ DEPENDENCIES
   capybara (= 0.4.1.2)
   haml (= 3.0.25)
   heroku (= 2.0.5)
+  ipaddress
   json (= 1.5.1)
   rack-test (= 0.6.0)
   redis (= 2.2.0)

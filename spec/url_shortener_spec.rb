@@ -62,7 +62,7 @@ describe "Url Shortener", :type => :request, :js => true, :redis => true do
     find_field('original_url')['value'].should == "http://localhost/"
     find('#submit_button')['disabled'].should == "true"
     find('#short_url').text.should == "http://itjo.bs/1"    
-    find('#counter').text.should == "( expanded 0 times and inspected 1 times )"    
+    find('#counter').text.should == "( expanded 0 times )"    
   end
 
   it "the stats are being updated correctly" do

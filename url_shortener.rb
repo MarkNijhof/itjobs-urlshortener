@@ -3,6 +3,8 @@ require 'sinatra'
 require 'haml'
 require 'redis'
 require 'uri'
+require 'net/http'
+require 'ipaddress'
 require 'json'
 require 'json/ext'
 
@@ -42,7 +44,7 @@ class UrlShortener < Sinatra::Base
       
       shortener
     rescue
-      { "error" => "Unable to save the short URL"}.to_json
+      { "error" => "Unable to save the short URL" }.to_json
     end
   end
 
@@ -65,13 +67,28 @@ class UrlShortener < Sinatra::Base
     shortner_json = REDIS.get("short_url:#{short_url}")
     raise "URL '/#{short_url}' has not been shorted" if shortner_json.nil?
 
-    REDIS.incr("counter:short_url:#{short_url}")
-    REDIS.incr("counter:urls_expanded")
+    REDIS.multi do
+      REDIS.incr("counter:short_url:#{short_url}")
+      REDIS.incr("counter:urls_expanded")
 
-    REDIS.sadd("referrers:short_url:#{short_url}", request.env['HTTP_REFERER'] || 'unknown')
-    REDIS.sadd("user-agents:short_url:#{short_url}", request.env['HTTP_USER_AGENT'] || 'unknown')
-    REDIS.sadd("remote-addresses:short_url:#{short_url}", request.env['REMOTE_ADDR'] || 'unknown')
+      time_in_minutes = (Time.new.strftime("%s").to_i / 60).to_i
+      REDIS.sadd("list:time-in-minutes:short_url:#{short_url}", time_in_minutes)
+      REDIS.incr("counter:time-in-minutes:short_url:#{short_url}:#{time_in_minutes}")
 
+      REDIS.sadd("list:referrers:short_url:#{short_url}", request.env['HTTP_REFERER'] || 'unknown')
+      REDIS.incr("counter:referrers:short_url:#{short_url}:#{request.env['HTTP_REFERER'] || 'unknown'}")
+
+      country = 'unknown'
+      ip_address = nil
+      ip_addresses = []
+      ip_addresses.concat request.env['HTTP_X_FORWARDED_FOR'].split(',') unless request.env['HTTP_X_FORWARDED_FOR'].nil?
+      ip_addresses.concat request.env['HTTP_CLIENT_IP'].split(',') unless request.env['HTTP_CLIENT_IP'].nil?
+      ip_addresses.concat request.env['REMOTE_ADDR'].split(',') unless request.env['REMOTE_ADDR'].nil?
+      ip_addresses.each { |address| ip_address = address and break if IPAddress.valid? address }
+      country = Net::HTTP.get(URI.parse("http://api.hostip.info/country.php?ip=#{ip_address}")) unless ip_address.nil?
+      REDIS.sadd("list:remote-addresses:short_url:#{short_url}", country)
+      REDIS.incr("counter:remote-addresses:short_url:#{short_url}:#{country}")
+    end
     redirect JSON.parse(shortner_json)["original_url"]
   end
 

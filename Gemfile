@@ -4,6 +4,7 @@ gem 'sinatra', '1.2.6'
 gem 'redis', '2.2.0'
 gem 'json', '1.5.1'
 gem 'haml', '3.0.25'
+gem 'ipaddress', '0.7.5'
 
 group :test, :development do
   gem 'sinatra-reloader', '0.5.0'
