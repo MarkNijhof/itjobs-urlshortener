@@ -78,18 +78,155 @@
             %div http://itjo.bs/...
           - else 
             %a{:style => 'float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;', :href => "#{@shortener['short_url']}"} #{@shortener['short_url']}
-
-        - unless @shortened_counter.nil?
-          %div#counter{:style => "float: left; position: relative; top: 15px;"}
-            &nbsp;
-            ( expanded #{@shortened_counter} times )
-        -
     -
 
-    .partial-box.width-3-4
-      .padding
-        Do you want to shorten and share an IT Job posting and you want to give a hint to the receiver of what to expect? Then use the IT Jobs url shortener because unlike the other good variants on the internet this one reveals the meaning in its own url. 
+    - unless @expanded_counter.nil?
+      :javascript
+        var referrer_chart;
+        
+        Highcharts.theme = {
+        	chart: {
+        		borderColor: '#000000',
+        		borderWidth: 1
+        	}
+        };
+        var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
+        		
+        document.observe("dom:loaded", function() {
 
+          var referrers_url = '/#{@short_url}/inspect/referrers';
+          var countries_url = '/#{@short_url}/inspect/countries';
+          var expanded_counter = #{@expanded_counter};
+
+          new Ajax.Request(referrers_url, {
+            method: 'get',
+            onSuccess: function(response){
+              json = JSON.parse(response.responseText);
+              render_referrer_chart(json);
+            }
+          });
+          new Ajax.Request(countries_url, {
+            method: 'get',
+            onSuccess: function(response){
+              json = JSON.parse(response.responseText);
+              render_countries_chart(json);
+            }
+          });
+
+        });
+        
+        function render_referrer_chart(json) {
+          var data = []
+          var counter = 0;
+          for (var key in json) {
+            if (json.hasOwnProperty(key)) {
+              counter += parseInt(json[key]);
+              data.push({name: key, y: json[key].percentage });
+            }
+          }
+        
+          referrer_chart = new Highcharts.Chart({
+            chart: {
+              renderTo: 'referrers',
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false
+            },
+            title: {
+              text: 'Referrers Detail'
+            },
+            tooltip: {
+              formatter: function() {
+                return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+              }
+            },
+            plotOptions: {
+              pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                  enabled: true,
+                  color: '#000000',
+                  connectorColor: '#000000',
+                  formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+                  }
+                }
+              }
+            },
+            series: [{
+              type: 'pie',
+              name: 'Referrer share',
+              data: data
+            }]
+          });
+        }
+        function render_countries_chart(json) {
+          var data = []
+          var counter = 0;
+          for (var key in json) {
+            if (json.hasOwnProperty(key)) {
+              counter += parseInt(json[key]);
+              data.push({name: key, y: json[key].percentage });
+            }
+          }
+        
+          referrer_chart = new Highcharts.Chart({
+            chart: {
+              renderTo: 'countries',
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false
+            },
+            title: {
+              text: 'Countries Detail'
+            },
+            tooltip: {
+              formatter: function() {
+                return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+              }
+            },
+            plotOptions: {
+              pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                  enabled: true,
+                  color: '#000000',
+                  connectorColor: '#000000',
+                  formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+                  }
+                }
+              }
+            },
+            series: [{
+              type: 'pie',
+              name: 'Countries share',
+              data: data
+            }]
+          });
+        }
+            
+      .partial-box.width-3-4
+        %h3
+          Click Analysis
+        .padding
+          = "The short URL has in total <b>#{@expanded_counter}</b> times been expanded back to the full (original) URL."
+          %br
+          %br
+          #referrers
+          %br
+          %br
+          #countries
+    -
+
+    - if @expanded_counter.nil?
+      .partial-box.width-3-4
+        .padding
+          Do you want to shorten and share an IT Job posting and you want to give a hint to the receiver of what to expect? Then use the IT Jobs url shortener because unlike the other good variants on the internet this one reveals the meaning in its own url. 
+    -
+    
     .partial-box.width-3-4
       %h3
         What's next

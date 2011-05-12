@@ -52,9 +52,10 @@ class UrlShortener < Sinatra::Base
     shortner_json = REDIS.get("short_url:#{params[:short_url]}")
     raise "URL '/#{params[:short_url]}' has not been shorted" if shortner_json.nil?
   
+    @short_url         = params[:short_url]
     @shortener         = JSON.parse(shortner_json)    
     @original_url      = @shortener['original_url']
-    @shortened_counter = REDIS.get("counter:short_url:#{params[:short_url]}") || 0
+    @expanded_counter  = REDIS.get("counter:short_url:#{params[:short_url]}") || 0
     @urls_shortened    = REDIS.get("counter:urls_shortened")
     @urls_expanded     = REDIS.get("counter:urls_expanded")
     haml :index
@@ -62,35 +63,63 @@ class UrlShortener < Sinatra::Base
 
   get '/:short_url/inspect/countries' do 
     content_type :json
+    begin
+      expanded_counter  = REDIS.get("counter:short_url:#{params[:short_url]}").to_i || 0
+      countries = REDIS.smembers("list:country:short_url:#{params[:short_url]}").to_a
+      {}.to_json and return if countries.length == 0
+      keys = countries.map { |country| "counter:country:short_url:#{params[:short_url]}:#{country}" }
+      counters = REDIS.mget(*keys)
+      result = Hash[countries.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)), 'value' => counter.to_i } })]
+      result['unknown'] = result.delete('xx')
+      total_percentage = 0
+      result.each do |key, item| 
+        next if key == 'unknown'
+        total_percentage = total_percentage + item['percentage'] 
+      end
+      result['unknown']['percentage'] = 100 - total_percentage
 
-    countries = REDIS.smembers("list:country:short_url:#{params[:short_url]}").to_a
-    keys = countries.map { |country| "counter:country:short_url:#{params[:short_url]}:#{country}" }
-    counters = REDIS.mget(*keys)
-    result = Hash[countries.zip(counters)]
-    
-    result.to_json
+      result.to_json
+    rescue
+      {}.to_json
+    end
   end
 
   get '/:short_url/inspect/referrers' do 
     content_type :json
+    begin
+      expanded_counter  = REDIS.get("counter:short_url:#{params[:short_url]}").to_i || 0
+      referrers = REDIS.smembers("list:referrers:short_url:#{params[:short_url]}").to_a
+      {}.to_json and return if referrers.length == 0
+      keys = referrers.map { |referrer| "counter:referrers:short_url:#{params[:short_url]}:#{referrer}" }
+      counters = REDIS.mget(*keys)
+      result = Hash[referrers.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)), 'value' => counter.to_i } })]
 
-    referrers = REDIS.smembers("list:referrers:short_url:#{params[:short_url]}").to_a
-    keys = referrers.map { |referrer| "counter:referrers:short_url:#{params[:short_url]}:#{referrer}" }
-    counters = REDIS.mget(*keys)
-    result = Hash[referrers.zip(counters)]
-    
-    result.to_json
+      total_percentage = 0
+      result.each do |key, item| 
+        next if key == 'unknown'
+        total_percentage = total_percentage + item['percentage'] 
+      end
+      result['unknown']['percentage'] = 100 - total_percentage
+
+      result.to_json
+    rescue
+      {}.to_json
+    end
   end
 
   get '/:short_url/inspect/minutes' do 
     content_type :json
-
-    minutes = REDIS.smembers("list:time-in-minutes:short_url:#{params[:short_url]}").to_a
-    keys = minutes.map { |minute| "counter:time-in-minutes:short_url:#{params[:short_url]}:#{minute}" }
-    counters = REDIS.mget(*keys)
-    result = Hash[minutes.zip(counters)]
+    begin
+      minutes = REDIS.smembers("list:time-in-minutes:short_url:#{params[:short_url]}").to_a
+      {}.to_json and return if minutes.length == 0
+      keys = minutes.map { |minute| "counter:time-in-minutes:short_url:#{params[:short_url]}:#{minute}" }
+      counters = REDIS.mget(*keys)
+      result = Hash[minutes.zip(counters)]
     
-    result.to_json
+      result.to_json
+    rescue
+      {}.to_json
+    end
   end
 
   get '/*' do 
