@@ -164,9 +164,9 @@ class UrlShortener < Sinatra::Base
       
       resp, data = http.post(path, data, headers)
       
-      country = data
+      country = data.downcase
       
-      raise country
+      # raise country
       
 
       REDIS.sadd("list:country:short_url:#{short_url}", country.downcase)
