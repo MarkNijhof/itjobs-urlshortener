@@ -142,7 +142,7 @@ class UrlShortener < Sinatra::Base
       REDIS.sadd("list:referrers:short_url:#{short_url}", (request.env['HTTP_REFERER'] || 'unknown').downcase)
       REDIS.incr("counter:referrers:short_url:#{short_url}:#{(request.env['HTTP_REFERER'] || 'unknown').downcase}")
 
-      country = 'unknown'
+      country = 'xx'
       ip_address = nil
       ip_addresses = []
       ip_addresses.concat request.env['HTTP_X_FORWARDED_FOR'].split(',') unless request.env['HTTP_X_FORWARDED_FOR'].nil?
@@ -150,25 +150,19 @@ class UrlShortener < Sinatra::Base
       ip_addresses.concat request.env['REMOTE_ADDR'].split(',') unless request.env['REMOTE_ADDR'].nil?
       ip_addresses.each { |address| ip_address = address and break if IPAddress.valid? address }
       # country = Net::HTTP.get(URI.parse("http://api.hostip.info/country.php?ip=#{ip_address}")) unless ip_address.nil?
-      # country = Net::HTTP.post(URI.parse("http://geoip3.maxmind.com/a?l=YTqD9wRUR6tg&i=#{ip_address}")) unless ip_address.nil?
 
       http = Net::HTTP.new('geoip3.maxmind.com', 80)
       http.use_ssl = false
       path = '/a'
 
-      data = "l=YTqD9wRUR6tg&i=#{ip_address}"
+      data = "l=#{ENV['MAX_MIND']}&i=#{ip_address}"
       headers = {
         'Referer' => 'http://itjo.bs/',
         'Content-Type' => 'application/x-www-form-urlencoded'
       }
-      
       resp, data = http.post(path, data, headers)
+      country = data.downcase unless data.include? 'IP_NOT_FOUND'
       
-      country = data.downcase
-      
-      # raise country
-      
-
       REDIS.sadd("list:country:short_url:#{short_url}", country.downcase)
       REDIS.incr("counter:country:short_url:#{short_url}:#{country.downcase}")
     end
