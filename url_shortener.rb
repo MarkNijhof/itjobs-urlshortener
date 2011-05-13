@@ -71,7 +71,7 @@ class UrlShortener < Sinatra::Base
     
     keys = countries.map { |country| "counter:country:short_url:#{params[:short_url]}:#{country}" }
     counters = REDIS.mget(*keys)
-    result = Hash[countries.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)).round(2), 'value' => counter.to_i } })]
+    result = Hash[countries.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)).round(1), 'value' => counter.to_i } })]
 
     result['unknown'] = result.delete('xx') if result.include?('xx')
     result['unknown'] = { 'percentage' => 0, 'value' => 0 } unless result.include?('xx')
@@ -81,7 +81,7 @@ class UrlShortener < Sinatra::Base
       next if key == 'unknown'
       total_percentage = total_percentage + item['percentage'] 
     end
-    result['unknown']['percentage'] = 100 - total_percentage.round(2)
+    result['unknown']['percentage'] = (100 - total_percentage).round(1)
 
     result.to_json
   end
@@ -96,7 +96,7 @@ class UrlShortener < Sinatra::Base
   
     keys = referrers.map { |referrer| "counter:referrers:short_url:#{params[:short_url]}:#{referrer}" }
     counters = REDIS.mget(*keys)
-    result = Hash[referrers.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)).round(2), 'value' => counter.to_i } })]
+    result = Hash[referrers.zip(counters.map { |counter| { 'percentage' => (counter.to_i / (expanded_counter.to_f / 100)).round(1), 'value' => counter.to_i } })]
 
     result['direct'] = result.delete('unknown') if result.include?('unknown')
     result['direct'] = { 'percentage' => 0, 'value' => 0 } unless result.include?('direct')
@@ -106,7 +106,7 @@ class UrlShortener < Sinatra::Base
       next if key == 'direct'
       total_percentage = total_percentage + item['percentage'] 
     end
-    result['direct']['percentage'] = 100 - total_percentage.round(2)
+    result['direct']['percentage'] = (100 - total_percentage).round(1)
 
     result.to_json
   end
