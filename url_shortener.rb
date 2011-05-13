@@ -151,17 +151,20 @@ class UrlShortener < Sinatra::Base
       ip_addresses.each { |address| ip_address = address and break if IPAddress.valid? address }
       # country = Net::HTTP.get(URI.parse("http://api.hostip.info/country.php?ip=#{ip_address}")) unless ip_address.nil?
 
-      http = Net::HTTP.new('geoip3.maxmind.com', 80)
-      http.use_ssl = false
-      path = '/a'
+      if !ip_address.nil?
+        http = Net::HTTP.new('geoip3.maxmind.com', 80)
+        http.use_ssl = false
+        path = '/a'
 
-      data = "l=#{ENV['MAX_MIND']}&i=#{ip_address}"
-      headers = {
-        'Referer' => 'http://itjo.bs/',
-        'Content-Type' => 'application/x-www-form-urlencoded'
-      }
-      resp, data = http.post(path, data, headers)
-      country = data.downcase unless data.include? 'IP_NOT_FOUND'
+        data = "l=#{ENV['MAX_MIND']}&i=#{ip_address}"
+        headers = {
+          'Referer' => 'http://itjo.bs/',
+          'Content-Type' => 'application/x-www-form-urlencoded'
+        }
+        resp, data = http.post(path, data, headers)
+        country = data.downcase unless data.include? 'IP_NOT_FOUND'
+        REDIS.sadd("list:country:ip-not-found", ip_address) if data.include? 'IP_NOT_FOUND'
+      end
       
       REDIS.sadd("list:country:short_url:#{short_url}", country.downcase)
       REDIS.incr("counter:country:short_url:#{short_url}:#{country.downcase}")
