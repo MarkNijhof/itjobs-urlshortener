@@ -130,15 +130,27 @@
               renderTo: 'referrers',
               plotBackgroundColor: null,
               plotBorderWidth: null,
-              plotShadow: false
+              plotShadow: false,
+              marginBottom: 30
             },
             title: {
-              text: 'Referrers Detail'
+              text: 'Referrer Details'
+            },
+            subtitle: {
+              text: '* direct: Email Clients, IM, AIR Apps, and Direct',
+              floating: true,
+              align: 'left',
+              x: 10,
+              verticalAlign: 'bottom',
+              y: 0
             },
             tooltip: {
               formatter: function() {
                 return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
               }
+            },
+            legend: {
+              enabled: true
             },
             plotOptions: {
               pie: {
@@ -176,10 +188,11 @@
               renderTo: 'countries',
               plotBackgroundColor: null,
               plotBorderWidth: null,
-              plotShadow: false
+              plotShadow: false,
+              marginBottom: 30
             },
             title: {
-              text: 'Countries Detail'
+              text: 'Country Details'
             },
             tooltip: {
               formatter: function() {
@@ -215,10 +228,10 @@
           = "The short URL has in total <b>#{@expanded_counter}</b> times been expanded back to the full (original) URL."
           %br
           %br
-          #referrers
+          #referrers{:style => 'margin: 0px 10px;'}
           %br
           %br
-          #countries
+          #countries{:style => 'margin: 0px 10px;'}
     -
 
     - if @expanded_counter.nil?
