@@ -139,8 +139,10 @@ class UrlShortener < Sinatra::Base
       REDIS.sadd("list:time-in-minutes:short_url:#{short_url}", time_in_minutes)
       REDIS.incr("counter:time-in-minutes:short_url:#{short_url}:#{time_in_minutes}")
 
-      REDIS.sadd("list:referrers:short_url:#{short_url}", (request.env['HTTP_REFERER'] || 'unknown').downcase)
-      REDIS.incr("counter:referrers:short_url:#{short_url}:#{(request.env['HTTP_REFERER'] || 'unknown').downcase}")
+      referrer = (request.env['HTTP_REFERER'] || 'unknown').downcase
+      referrer = referrer.gsub! /(.*)\//, "#{$1}" if referrer.match /(.*)\//      
+      REDIS.sadd("list:referrers:short_url:#{short_url}", referrer)
+      REDIS.incr("counter:referrers:short_url:#{short_url}:#{referrer}")
 
       country = 'xx'
       ip_address = nil
@@ -149,7 +151,6 @@ class UrlShortener < Sinatra::Base
       ip_addresses.concat request.env['HTTP_CLIENT_IP'].split(',') unless request.env['HTTP_CLIENT_IP'].nil?
       ip_addresses.concat request.env['REMOTE_ADDR'].split(',') unless request.env['REMOTE_ADDR'].nil?
       ip_addresses.each { |address| ip_address = address and break if IPAddress.valid? address }
-      # country = Net::HTTP.get(URI.parse("http://api.hostip.info/country.php?ip=#{ip_address}")) unless ip_address.nil?
 
       if !ip_address.nil?
         http = Net::HTTP.new('geoip3.maxmind.com', 80)
@@ -166,8 +167,8 @@ class UrlShortener < Sinatra::Base
         REDIS.sadd("list:country:ip-not-found", ip_address) if data.include? 'IP_NOT_FOUND'
       end
       
-      REDIS.sadd("list:country:short_url:#{short_url}", country.downcase)
-      REDIS.incr("counter:country:short_url:#{short_url}:#{country.downcase}")
+      REDIS.sadd("list:country:short_url:#{short_url}", country)
+      REDIS.incr("counter:country:short_url:#{short_url}:#{country}")
     end
     redirect JSON.parse(shortner_json)["original_url"]
   end
