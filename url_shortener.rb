@@ -10,6 +10,10 @@ require 'json/ext'
 
 require 'sinatra/base'
 
+require './pretty_date'
+
+Time.send :include, PrettyDate
+
 class UrlShortener < Sinatra::Base
 
   set :root, File.dirname(__FILE__)
@@ -22,6 +26,7 @@ class UrlShortener < Sinatra::Base
   end
 
   get '/' do 
+    @server_name = request.env['SERVER_NAME']
     @original_url = params[:original_url] unless params[:original_url].nil?
     @urls_shortened = REDIS.get("counter:urls_shortened")
     @urls_expanded  = REDIS.get("counter:urls_expanded")
@@ -35,7 +40,7 @@ class UrlShortener < Sinatra::Base
     
       shortener = {
         'original_url' => params[:original_url],
-        'short_url' => "http://itjo.bs/#{short_url}",
+        'short_url' => "http://#{request.env['SERVER_NAME']}/#{short_url}",
         'create_date' => Time.new.inspect
       }.to_json
   
@@ -49,6 +54,7 @@ class UrlShortener < Sinatra::Base
   end
 
   get '/:short_url/inspect' do 
+    @server_name = request.env['SERVER_NAME']
     shortner_json = REDIS.get("short_url:#{params[:short_url]}")
     raise "URL '/#{params[:short_url]}' has not been shorted" if shortner_json.nil?
   
@@ -159,7 +165,7 @@ class UrlShortener < Sinatra::Base
 
         data = "l=#{ENV['MAX_MIND']}&i=#{ip_address}"
         headers = {
-          'Referer' => 'http://itjo.bs/',
+          'Referer' => "http://#{ENV['HOSTNAME']}/",
           'Content-Type' => 'application/x-www-form-urlencoded'
         }
         resp, data = http.post(path, data, headers)
@@ -174,7 +180,8 @@ class UrlShortener < Sinatra::Base
   end
 
   error 400..510 do 
-    status 200    
+    status 200
+    @server_name = request.env['SERVER_NAME']
     @original_url = params[:original_url] unless params[:original_url].nil?
     haml :index 
   end

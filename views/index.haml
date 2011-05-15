@@ -17,7 +17,7 @@
       $('counter').update();
     }
     $('short_url').update();
-    $('short_url').insert("<div>http://itjo.bs/...</div>");
+    $('short_url').insert("<div>http://#{@server_name}/...</div>");
   }
   
   function prepare_form_to_work_with_ajax() {
@@ -34,7 +34,7 @@
         },
         onException: function(instance, exception) {
           $('short_url').update();
-          $('short_url').insert("<div>http://itjo.bs/...</div>");
+          $('short_url').insert("<div>http://#{@server_name}/...</div>");
         }
       });
     });
@@ -75,7 +75,7 @@
           &nbsp;
         #short_url{:style => 'float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;'}
           - if @shortener.nil?
-            %div http://itjo.bs/...
+            %div="http://#{@server_name}/..."
           - else 
             %a{:style => 'float: left; font-size: 22px; text-decoration: none; top: 2px; position: relative; color: #7dbb42;', :href => "#{@shortener['short_url']}"} #{@shortener['short_url']}
     -
