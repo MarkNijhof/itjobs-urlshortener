@@ -125,10 +125,14 @@ class UrlShortener < Sinatra::Base
     minutes = REDIS.smembers("list:time-in-minutes:short_url:#{params[:short_url]}").to_a
     {}.to_json and return if minutes.length == 0
     keys = minutes.map { |minute| "counter:time-in-minutes:short_url:#{params[:short_url]}:#{minute}" }
-    counters = REDIS.mget(*keys)
-    result = Hash[minutes.zip(counters)]
-  
-    result.to_json
+    counters = REDIS.mget(*keys).map{ |counter| counter.to_i }
+    result = Hash[minutes.map{ |time| Time.at(time.to_i * 60) }.zip(counters)]
+
+    stats = Hash.new
+    (minutes[0].to_i..minutes[result.length - 1].to_i).each{ |minute| stats[Time.at(minute * 60)] = 0 }
+    stats.merge! result
+      
+    {'start_date' => Time.at(stats.keys[0]).strftime("%s").to_i * 1000, 'data' => stats.values }.to_json
   end
 
   get '/*' do 
@@ -142,7 +146,7 @@ class UrlShortener < Sinatra::Base
       REDIS.incr("counter:short_url:#{short_url}")
       REDIS.incr("counter:urls_expanded")
 
-      time_in_minutes = (Time.new.strftime("%s").to_i / 60).to_i
+      time_in_minutes = (Time.new.utc.strftime("%s").to_i / 60).to_i
       REDIS.sadd("list:time-in-minutes:short_url:#{short_url}", time_in_minutes)
       REDIS.incr("counter:time-in-minutes:short_url:#{short_url}:#{time_in_minutes}")
 
