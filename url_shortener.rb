@@ -151,7 +151,7 @@ class UrlShortener < Sinatra::Base
       REDIS.incr("counter:time-in-minutes:short_url:#{short_url}:#{time_in_minutes}")
 
       referrer = (request.env['HTTP_REFERER'] || 'unknown').downcase
-      referrer.gsub!(/(.*)\/$/, "#{$1}")
+      referrer = referrer[0, referrer.length - 1] if referrer[-1, 1] == '/'
       REDIS.sadd("list:referrers:short_url:#{short_url}", referrer)
       REDIS.incr("counter:referrers:short_url:#{short_url}:#{referrer}")
 
