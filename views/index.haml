@@ -95,7 +95,11 @@
         var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
         		
         document.observe("dom:loaded", function() {
+          render_all_charts();
+          setInterval(function() { render_all_charts(); }, 120000);
+        });
 
+        function render_all_charts() {
           var minutes_url = '/#{@short_url}/inspect/minutes?cache=' + new Date().getTime();
           var referrers_url = '/#{@short_url}/inspect/referrers?cache=' + new Date().getTime();
           var countries_url = '/#{@short_url}/inspect/countries?cache=' + new Date().getTime();
@@ -122,7 +126,7 @@
               render_countries_chart(json);
             }
           });
-        });
+        }
         
         function render_minutes_chart(json) {
           minutes_chart = new Highcharts.Chart({
