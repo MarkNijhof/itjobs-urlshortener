@@ -348,7 +348,7 @@
       .partial-box.width-1-4
         .padding
           Drag the following link to your bookmarks:
-          %a{ :href => "javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),f='http://ITJo.bs/',l=d.location,p='?original_url='+enc(l.href),u=f+p;try{if(!/^(.*\.)?tumblrzzz[^.]*$/.test(l.host))throw(0);tstbklt();}catch(z){a%20=function(){if(!w.open(u))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)" } Shorten with ITJo.bs
+          %a{ :href => "javascript:var%20d=document,w=window,enc=encodeURIComponent,e=w.getSelection,k=d.getSelection,x=d.selection,s=(e?e():(k)?k():(x?x.createRange().text:0)),s2=((s.toString()=='')?s:('%22'+enc(s)+'%22')),f='http://#{@server_name}/',l=d.location,p='?original_url='+enc(l.href),u=f+p;try{if(!/^(.*\.)?tumblrzzz[^.]*$/.test(l.host))throw(0);tstbklt();}catch(z){a%20=function(){if(!w.open(u))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();}void(0)" } Shorten with #{@server_name}
           %br
           %br
           Then when you are on a page that you want to shorten with the IT Jobs url shortener just click on the link in your bookmarks and it will redirect you to this page with the url already filled-in.
