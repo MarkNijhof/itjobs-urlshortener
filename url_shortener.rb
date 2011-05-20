@@ -90,7 +90,7 @@ class UrlShortener < Sinatra::Base
     end
     result['unknown']['percentage'] = (100 - total_percentage).round(1)
 
-    result.delete('unknown') if result['unknown']['percentage'] == 0
+    result.delete('unknown') if !result.include?('unknown') || result['unknown'].nil? || result['unknown']['percentage'] == 0
 
     result.to_json
   end
@@ -117,7 +117,7 @@ class UrlShortener < Sinatra::Base
     end
     result['direct']['percentage'] = (100 - total_percentage).round(1)
 
-    result.delete('unknown') if result['unknown']['percentage'] == 0
+    result.delete('unknown') if !result.include?('unknown') || result['unknown'].nil? || result['unknown']['percentage'] == 0
 
     result.to_json
   end
